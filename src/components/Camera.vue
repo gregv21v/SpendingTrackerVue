@@ -21,6 +21,13 @@
             this.photo = URL
             .createObjectURL(event.target.files[0])
             
+            axios.post(
+              '/upload_receipt_img', 
+              this.photo, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+            })
             console.log(this.photo)
           }
         }

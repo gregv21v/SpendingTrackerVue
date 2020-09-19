@@ -2,8 +2,6 @@ const express = require('express');
 const webpack = require('webpack');
 const webpackMiddleware = require('webpack-dev-middleware');
 const fs = require('fs')
-
-const bodyParser = require('body-parser');
 const multer  = require('multer');
 
 
@@ -44,6 +42,7 @@ app.post(
   '/upload_receipt_img', 
   upload.single("file"),
   function(req, res) {
+    console.log("File uploaded")
     var file = __dirname + '/' + req.file.filename;
     fs.rename(req.file.path, file, function(err) {
       if (err) {
