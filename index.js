@@ -1,6 +1,11 @@
 const express = require('express');
 const webpack = require('webpack');
 const webpackMiddleware = require('webpack-dev-middleware');
+const fs = require('fs')
+
+const bodyParser = require('body-parser');
+const multer  = require('multer');
+
 
 // Setup
 const app = express();
@@ -31,3 +36,26 @@ app.listen(port, () => {
 // Register app and middleware. Required for better
 // performance when running from play.js
 try { pjs.register(app, middleware); } catch (error) { }
+
+
+var upload = multer({ dest: '/tmp/'});
+
+app.post(
+  '/upload_receipt_img', 
+  upload.single("file"),
+  function(req, res) {
+    var file = __dirname + '/' + req.file.filename;
+    fs.rename(req.file.path, file, function(err) {
+      if (err) {
+        console.log(err);
+        res.send(500);
+      } else {
+        res.json({
+          message: 'File uploaded successfully',
+          filename: req.file.filename
+        });
+      }
+    });
+  }
+)
+

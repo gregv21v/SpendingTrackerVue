@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <Camera/>
     <ItemTable/>
   </div>
 </template>
@@ -7,11 +8,13 @@
 <script>
 import HelloWorld from './components/HelloWorld'
 import ItemTable from './components/ItemTable'
+import Camera from './components/Camera'
 
 export default {
   name: 'App',
   components: {
-    ItemTable
+    ItemTable,
+    Camera
   }
 }
 </script>
