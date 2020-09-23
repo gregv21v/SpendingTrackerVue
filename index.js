@@ -61,14 +61,32 @@ app.post(
 )
 
 
+
+
 app.post("/upload_receipt_data", 
   function(req, res) {
+    
+    
+    // get the last file id from the data file
+    var lastId = 0
+    fs.readFile(__dirname + "/data/data.txt", function(err, data) {
+      lastId = parseInt(data)
+    })
+    
     console.log("Receipt Uploaded")
-    fs.writeFile(__dirname + "/test.json", 
+    fs.writeFile(__dirname + "/data/" + lastId + ".json", 
       JSON.stringify(req.body), 
       function(err) {
         console.log("Test Written")
-        res.send("done")
+        
+        fs.writeFile(
+          __dirname + "/data/data.txt", 
+          lastId+1,
+          function(err) {
+            res.send("done")
+          })
+        
+    
       })
   });
 
