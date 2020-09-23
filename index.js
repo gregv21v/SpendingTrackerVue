@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const webpackMiddleware = require('webpack-dev-middleware');
 const fs = require('fs')
 const multer  = require('multer');
+const bodyParser = require('body-parser')
 
 
 // Setup
@@ -20,6 +21,7 @@ const middleware = webpackMiddleware(compiler, {
   }
 });
 app.use(middleware);
+app.use(bodyParser.json())
 app.get('/', (req, res) => {
   res.sendFile('public/index.html', { root: __dirname });
 });
@@ -36,14 +38,14 @@ app.listen(port, () => {
 try { pjs.register(app, middleware); } catch (error) { }
 
 
-var upload = multer({ dest: '/tmp/'});
+var upload = multer({ dest: 'tmp/'});
 
 app.post(
   '/upload_receipt_img', 
-  upload.single("file"),
+  upload.single("image"),
   function(req, res) {
     console.log("File uploaded")
-    var file = __dirname + '/' + req.file.filename;
+    var file = __dirname + '/images/' + req.file.filename + ".jpeg";
     fs.rename(req.file.path, file, function(err) {
       if (err) {
         console.log(err);
@@ -57,4 +59,16 @@ app.post(
     });
   }
 )
+
+
+app.post("/upload_receipt_data", 
+  function(req, res) {
+    console.log("Receipt Uploaded")
+    fs.writeFile(__dirname + "/test.json", 
+      JSON.stringify(req.body), 
+      function(err) {
+        console.log("Test Written")
+        res.send("done")
+      })
+  });
 
