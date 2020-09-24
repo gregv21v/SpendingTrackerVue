@@ -62,31 +62,47 @@ app.post(
 
 
 
-
+// upload a receipt to the server
 app.post("/upload_receipt_data", 
   function(req, res) {
     
     
     // get the last file id from the data file
     var lastId = 0
-    fs.readFile(__dirname + "/data/data.txt", function(err, data) {
-      lastId = parseInt(data)
-    })
-    
-    console.log("Receipt Uploaded")
-    fs.writeFile(__dirname + "/data/" + lastId + ".json", 
-      JSON.stringify(req.body), 
-      function(err) {
-        console.log("Test Written")
-        
+    fs.readFile(
+      __dirname + "/data/data.txt", 
+      function(err, data) {
+        lastId = parseInt(data)
+        console.log("Receipt Uploaded")
         fs.writeFile(
-          __dirname + "/data/data.txt", 
-          lastId+1,
+          __dirname + "/data/" + lastId + ".json", 
+          JSON.stringify(req.body), 
           function(err) {
-            res.send("done")
-          })
+            console.log("Test Written")
         
-    
+            // update last id
+            fs.writeFile(
+              __dirname + "/data/data.txt", 
+              lastId+1,
+              function(err) {
+                res.send("done")
+              }
+            );
+        })
       })
-  });
+});
+  
+  
+// get a receipt by id
+app.get("/receipt/:id", 
+  function(req, res) {
+    console.log("receipt loading...")
+    console.log(req.params.id)
+    fs.readFile(
+      __dirname + '/data/' + req.params.id + ".json",
+      function(err, data) {
+        console.log(JSON.parse(data))
+        res.send(JSON.parse(data))
+      })
+  })
 

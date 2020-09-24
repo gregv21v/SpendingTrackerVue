@@ -43,6 +43,17 @@
              </button>
           </td>
         </tr>
+        <tr>
+          <td> 
+            <input id="receiptId" type="text">
+            </input>
+          </td>
+          <td colspan="2">
+             <button v-on:click="loadReceipt">
+              Load Receipt
+             </button>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -68,11 +79,11 @@ export default {
         },
         {
           id: 2, quantity: 3, 
-          name: 'apple', price: 1.99
+          name: 'apple', price: 1.77
         },
         {
           id: 3, quantity: 5, 
-          name: 'orange', price: 2.99
+          name: 'orange', price: 2.39
         }
       ]
     }
@@ -99,6 +110,20 @@ export default {
           headers: {
             'Content-Type': 'application/json'
           }
+        })
+    },
+    loadReceipt: function() {
+      
+      console.log("loading receipt...")
+      let receiptId = document
+            .getElementById('receiptId').value
+            
+      let self = this
+      axios.get("receipt/" + receiptId)
+        .then(function(resp) {
+          console.log(JSON.stringify(resp.data))
+          self.items = resp.data
+          console.log(resp.data)
         })
     }
   }
