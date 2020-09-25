@@ -54,6 +54,13 @@
              </button>
           </td>
         </tr>
+        <tr>
+          <td colspan="3">
+             <button v-on:click="loadLastReceipt">
+              Load Last
+             </button>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -122,6 +129,14 @@ export default {
       axios.get("receipt/" + receiptId)
         .then(function(resp) {
           console.log(JSON.stringify(resp.data))
+          self.items = resp.data
+          console.log(resp.data)
+        })
+    },
+    loadLastReceipt: function() {
+      let self = this
+      axios.get("lastReceipt")
+        .then(function(resp) {
           self.items = resp.data
           console.log(resp.data)
         })

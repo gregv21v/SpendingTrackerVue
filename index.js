@@ -75,7 +75,8 @@ app.post("/upload_receipt_data",
         lastId = parseInt(data)
         console.log("Receipt Uploaded")
         fs.writeFile(
-          __dirname + "/data/" + lastId + ".json", 
+          __dirname + "/data/receipts/" + 
+            lastId + ".json", 
           JSON.stringify(req.body), 
           function(err) {
             console.log("Test Written")
@@ -99,10 +100,58 @@ app.get("/receipt/:id",
     console.log("receipt loading...")
     console.log(req.params.id)
     fs.readFile(
-      __dirname + '/data/' + req.params.id + ".json",
+      __dirname + '/data/receipts/' + 
+        req.params.id + ".json",
       function(err, data) {
         console.log(JSON.parse(data))
         res.send(JSON.parse(data))
       })
   })
+  
+
+app.get("/lastReceipt", 
+  function(req, res) {
+    fs.readFile(
+      __dirname + "/data/data.txt",
+      function(err, lastIdData) {
+        let lastId = parseInt(lastIdData) - 1
+          fs.readFile(
+            __dirname + '/data/receipts/' + lastId + ".json",
+            function(err, data) {
+              console.log(JSON.parse(data))
+              res.send(JSON.parse(data))
+          })
+      }
+    )
+  })
+  
+  
+// get five receipts starting at a particular index
+app.get("/bulk/receipts/:start",
+  function(req, res) {
+    fs.readdir(
+      __dirname + "/data/receipts/",
+      function (err, files) {
+        //handling error
+        if (err) {
+          return console.log(
+            'Unable to scan directory: ' + err);
+        } 
+        
+        let receiptList = []
+        // add 5 receipts to a json array
+        for(var i = req.params.start; 
+          i < files.length && i < 5; i++) {
+          // get all the json for 
+          // the first 5 receipts
+          var receiptData = fs
+              .readFileSync(files[i])
+          receiptList
+            .push(JSON.parse(receiptData))
+        }
+        
+        res.send(receiptList)
+    });
+  })
+
 
