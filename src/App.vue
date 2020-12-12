@@ -6,22 +6,23 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
 import ItemTable from './components/ItemTable'
 import Camera from './components/Camera'
+import FirebaseTest from './components/FirebaseTest'
 
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
- 
+
 Vue.use(VueAxios, axios)
 
 
 export default {
   name: 'App',
   components: {
-    ItemTable,
-    Camera
+    //ItemTable,
+    //Camera,
+    FirebaseTest
   }
 }
 </script>

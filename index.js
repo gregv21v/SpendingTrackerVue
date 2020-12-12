@@ -8,7 +8,7 @@ const bodyParser = require('body-parser')
 
 // Setup
 const app = express();
-const port = process.env['WEB_APP_PORT'];
+const port = 8080//process.env['WEB_APP_PORT'];
 const config = require('./webpack.config.dev.js');
 const compiler = webpack(config);
 const middleware = webpackMiddleware(compiler, {
@@ -16,7 +16,7 @@ const middleware = webpackMiddleware(compiler, {
   serverSideRender: true,
   watchOptions: {
     // Due to iOS devices memory constraints
-    // disabling file watching is recommended 
+    // disabling file watching is recommended
     ignored: /.*/
   }
 });
@@ -41,7 +41,7 @@ try { pjs.register(app, middleware); } catch (error) { }
 var upload = multer({ dest: 'tmp/'});
 
 app.post(
-  '/upload_receipt_img', 
+  '/upload_receipt_img',
   upload.single("image"),
   function(req, res) {
     console.log("File uploaded")
@@ -63,27 +63,27 @@ app.post(
 
 
 // upload a receipt to the server
-app.post("/upload_receipt_data", 
+app.post("/upload_receipt_data",
   function(req, res) {
-    
-    
+
+
     // get the last file id from the data file
     var lastId = 0
     fs.readFile(
-      __dirname + "/data/data.txt", 
+      __dirname + "/data/data.txt",
       function(err, data) {
         lastId = parseInt(data)
         console.log("Receipt Uploaded")
         fs.writeFile(
-          __dirname + "/data/receipts/" + 
-            lastId + ".json", 
-          JSON.stringify(req.body), 
+          __dirname + "/data/receipts/" +
+            lastId + ".json",
+          JSON.stringify(req.body),
           function(err) {
             console.log("Test Written")
-        
+
             // update last id
             fs.writeFile(
-              __dirname + "/data/data.txt", 
+              __dirname + "/data/data.txt",
               lastId+1,
               function(err) {
                 res.send("done")
@@ -92,24 +92,24 @@ app.post("/upload_receipt_data",
         })
       })
 });
-  
-  
+
+
 // get a receipt by id
-app.get("/receipt/:id", 
+app.get("/receipt/:id",
   function(req, res) {
     console.log("receipt loading...")
     console.log(req.params.id)
     fs.readFile(
-      __dirname + '/data/receipts/' + 
+      __dirname + '/data/receipts/' +
         req.params.id + ".json",
       function(err, data) {
         console.log(JSON.parse(data))
         res.send(JSON.parse(data))
       })
   })
-  
 
-app.get("/lastReceipt", 
+
+app.get("/lastReceipt",
   function(req, res) {
     fs.readFile(
       __dirname + "/data/data.txt",
@@ -124,8 +124,8 @@ app.get("/lastReceipt",
       }
     )
   })
-  
-  
+
+
 // get five receipts starting at a particular index
 app.get("/bulk/receipts/:start",
   function(req, res) {
@@ -136,22 +136,20 @@ app.get("/bulk/receipts/:start",
         if (err) {
           return console.log(
             'Unable to scan directory: ' + err);
-        } 
-        
+        }
+
         let receiptList = []
         // add 5 receipts to a json array
-        for(var i = req.params.start; 
+        for(var i = req.params.start;
           i < files.length && i < 5; i++) {
-          // get all the json for 
+          // get all the json for
           // the first 5 receipts
           var receiptData = fs
               .readFileSync(files[i])
           receiptList
             .push(JSON.parse(receiptData))
         }
-        
+
         res.send(receiptList)
     });
   })
-
-
